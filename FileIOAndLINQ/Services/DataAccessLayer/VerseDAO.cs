@@ -1,6 +1,7 @@
 ﻿/// Brian Leung CST - 250 05/03/2026 File I/O and LINQ Activity 6
 
 using FileIOAndLINQ.Model;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -83,6 +84,45 @@ namespace FileIOAndLINQ.Services.DataAccessLayer
                     // Use ServiceStack to serialize to csv
                     serialized = ServiceStack.Text.CsvSerializer.SerializeToString(_verses);
                     break;
+                case ".xml":
+                    // Use ServiceStack to serialize to xml
+                    serialized = ServiceStack.Text.XmlSerializer.SerializeToString(_verses);
+                    break;
+                case ".xlsx":
+                    using (ExcelPackage package = new ExcelPackage())
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Verses");
+
+                        // Header row
+                        worksheet.Cells[1, 1].Value = "Id";
+                        worksheet.Cells[1, 2].Value = "Book";
+                        worksheet.Cells[1, 3].Value = "Chapter";
+                        worksheet.Cells[1, 4].Value = "Verse";
+                        worksheet.Cells[1, 5].Value = "Text";
+                        worksheet.Cells[1, 6].Value = "Meaning";
+                        worksheet.Cells[1, 7].Value = "Importance";
+
+                        // Data rows
+                        int row = 2;
+                        foreach (VerseDataModel verse in _verses)
+                        {
+                            worksheet.Cells[row, 1].Value = verse.Id;
+                            worksheet.Cells[row, 2].Value = verse.Book;
+                            worksheet.Cells[row, 3].Value = verse.Chapter;
+                            worksheet.Cells[row, 4].Value = verse.Verse;
+                            worksheet.Cells[row, 5].Value = verse.Text;
+                            worksheet.Cells[row, 6].Value = verse.Meaning;
+                            worksheet.Cells[row, 7].Value = verse.Importance;
+                            row++;
+                        }
+
+                        // Auto-fit columns
+                        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                        // Save the Excel file
+                        package.SaveAs(new FileInfo(fileName));
+                    }
+                    break;
                 default:
                     return "File not recognized";
             }
@@ -153,7 +193,35 @@ namespace FileIOAndLINQ.Services.DataAccessLayer
                     // Deserialize the data using the CsvSerializer
                     dataVerses = ServiceStack.Text.CsvSerializer.DeserializeFromString<List<VerseDataModel>>(data);
                     break;
+                case ".xml":
+                    // Deserialize the data using the XmlSerializer
+                    dataVerses = ServiceStack.Text.XmlSerializer.DeserializeFromString<List<VerseDataModel>>(data);
+                    break;
+                case ".xlsx":
+                    using (ExcelPackage package = new ExcelPackage(new FileInfo(fileName)))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0]; // first worksheet
 
+                        // Start from row 2 (skip header row)
+                        for (int row = 2; row <= worksheet.Dimension.Rows; row++)
+                        {
+                            if (worksheet.Cells[row, 1].Value == null) continue; // skip empty rows
+
+                            VerseDataModel verse = new VerseDataModel
+                            {
+                                Id = Convert.ToInt32(worksheet.Cells[row, 1].Value ?? 0),
+                                Book = worksheet.Cells[row, 2].Value?.ToString() ?? "",
+                                Chapter = Convert.ToInt32(worksheet.Cells[row, 3].Value ?? 0),
+                                Verse = worksheet.Cells[row, 4].Value?.ToString() ?? "",
+                                Text = worksheet.Cells[row, 5].Value?.ToString() ?? "",
+                                Meaning = worksheet.Cells[row, 6].Value?.ToString() ?? "",
+                                Importance = Convert.ToInt32(worksheet.Cells[row, 7].Value ?? 0)
+                            };
+
+                            dataVerses.Add(verse);
+                        }
+                    }
+                    break;
                 default:
                     // Return the issue to the user
                     return "File not recognized";
@@ -234,6 +302,47 @@ namespace FileIOAndLINQ.Services.DataAccessLayer
 
             // Return the list of most important verses
             return mostImportantVerses;
+        }
+
+        /// <summary>
+        /// Returns how many verses a verse string represents
+        /// </summary>
+        private int GetVerseCount(string verseStr)
+        {
+            if (string.IsNullOrWhiteSpace(verseStr))
+                return 0;
+
+            verseStr = verseStr.Trim();
+
+            // Handle ranges
+            if (verseStr.Contains('-'))
+            {
+                string[] parts = verseStr.Split('-');
+                if (parts.Length == 2 &&
+                    int.TryParse(parts[0].Trim(), out int start) &&
+                    int.TryParse(parts[1].Trim(), out int end))
+                {
+                    return Math.Max(1, end - start + 1);
+                }
+            }
+
+            // Single verse
+            return 1;
+        }
+
+        /// <summary>
+        /// Calculate the total number of verses
+        /// </summary>
+        public int GetTotalVerseCount()
+        {
+            int total = 0;
+
+            foreach (VerseDataModel verse in _verses)
+            {
+                total += GetVerseCount(verse.Verse);
+            }
+
+            return total;
         }
     }
 }

@@ -25,7 +25,9 @@ namespace FileIOAndLINQ.PresentationLayer
         string filter = "All Files (*.*)|*.*|" +
                         "Text File (*.txt)|*.txt|" +
                         "CSV File (*.csv)|*.csv|" +
-                        "JSON File (*.json)|*.json";
+                        "JSON File (*.json)|*.json|" +
+                        "XML File (*.xml)|*.xml|" +
+                        "Excel File (*.xlsx)|*.xlsx";
         // Store the number of verses to show
         private int _numToShow;
 
@@ -322,6 +324,8 @@ namespace FileIOAndLINQ.PresentationLayer
                 ClearInputFields();
                 // Refresh the data grid view
                 RefreshVersesDgv();
+                // Update the total verse count label
+                UpdateTotalVerseCount();
             }
             // Check if the book is invalid
             else if (!isValidBook)
@@ -387,6 +391,8 @@ namespace FileIOAndLINQ.PresentationLayer
         {
             // Set the data source for the data grid view
             dvgVerseDisplay.DataSource = _versesBindingSource;
+            RefreshVersesDgv();
+            UpdateTotalVerseCount();
         }
 
         /// <summary>
@@ -441,7 +447,9 @@ namespace FileIOAndLINQ.PresentationLayer
             string filter = "All Files (*.*)|*.*|" +
                             "Text File (*.txt)|*.txt|" +
                             "CSV File (*.csv)|*.csv|" +
-                            "JSON File (*.json)|*.json";
+                            "JSON File (*.json)|*.json|" +
+                            "XML File (*.xml)|*.xml|" +
+                            "Excel File (*.xlsx)|*.xlsx";
 
             string fileName = "";
             string result = "";
@@ -488,7 +496,9 @@ namespace FileIOAndLINQ.PresentationLayer
             string filter = "All Files (*.*)|*.*|" +
                             "Text File (*.txt)|*.txt|" +
                             "CSV File (*.csv)|*.csv|" +
-                            "JSON File (*.json)|*.json";
+                            "JSON File (*.json)|*.json|" +
+                            "XML File (*.xml)|*.xml|" +
+                            "Excel File (*.xlsx)|*.xlsx";
 
             // Create an open file dialog object
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -515,6 +525,9 @@ namespace FileIOAndLINQ.PresentationLayer
 
                     // Refresh the data grid view
                     RefreshVersesDgv();
+
+                    // Update the total verse count label
+                    UpdateTotalVerseCount();
 
                 }
             }
@@ -570,6 +583,58 @@ namespace FileIOAndLINQ.PresentationLayer
 
             // Format the data grid view
             FormatVersesDgv();
+        }
+
+        /// <summary>
+        /// Show the entire, unsorted list of verses
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RdoShowAllCheckedChangedEH(object sender, EventArgs e)
+        {
+            // Refresh the dgv with all of the users verses
+            RefreshVersesDgv();
+        }
+
+        /// <summary>
+        /// Filter the displayed verses in real-time
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TxtSearchTextChangedEH(object sender, EventArgs e)
+        {
+            string searchText = txtSearch.Text.Trim().ToLower();
+
+            // If search box is empty, show all verses
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                RefreshVersesDgv();
+                return;
+            }
+
+            List<VerseDisplayModel> allVerses = _verseLogic.GetAllVerses();
+
+            List<VerseDisplayModel> filteredVerses = allVerses
+                .Where(v =>
+                    v.Reference.ToLower().Contains(searchText) ||
+                    v.Text.ToLower().Contains(searchText) ||
+                    v.Meaning.ToLower().Contains(searchText))
+                .ToList();
+
+            // Update the binding source
+            _versesBindingSource.DataSource = filteredVerses;
+
+            // Re-format the grid
+            FormatVersesDgv();
+        }
+
+        /// <summary>
+        /// Update the total verse count label
+        /// </summary>
+        private void UpdateTotalVerseCount()
+        {
+            int total = _verseLogic.GetTotalVerseCount();
+            lblTotalVerses.Text = $"Total Verses: {total}";
         }
     }
 }

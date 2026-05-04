@@ -123,5 +123,13 @@ namespace FileIOAndLINQ.Services.BusinessLogicLayer
             // Convert the dataVerses list to a displayVerses list and return
             return ConvertVerseDataToDisplay(dataVerses);
         }
+
+        /// <summary>
+        /// Get the total number of verses
+        /// </summary>
+        public int GetTotalVerseCount()
+        {
+            return _verseDAO.GetTotalVerseCount();
+        }
     }
 }

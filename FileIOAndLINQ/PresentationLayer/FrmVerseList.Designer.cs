@@ -59,6 +59,8 @@
             rdoShowAll = new RadioButton();
             trbNumberToShow = new TrackBar();
             dvgVerseDisplay = new DataGridView();
+            txtSearch = new TextBox();
+            lblTotalVerses = new Label();
             mnsFileActions.SuspendLayout();
             grpAddVerse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudVerseImportance).BeginInit();
@@ -353,6 +355,7 @@
             rdoShowAll.TabStop = true;
             rdoShowAll.Text = "Show All";
             rdoShowAll.UseVisualStyleBackColor = true;
+            rdoShowAll.CheckedChanged += RdoShowAllCheckedChangedEH;
             // 
             // trbNumberToShow
             // 
@@ -365,16 +368,35 @@
             // dvgVerseDisplay
             // 
             dvgVerseDisplay.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dvgVerseDisplay.Location = new Point(389, 35);
+            dvgVerseDisplay.Location = new Point(390, 67);
             dvgVerseDisplay.Name = "dvgVerseDisplay";
             dvgVerseDisplay.Size = new Size(419, 343);
             dvgVerseDisplay.TabIndex = 4;
+            // 
+            // txtSearch
+            // 
+            txtSearch.Location = new Point(390, 38);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(206, 23);
+            txtSearch.TabIndex = 5;
+            txtSearch.TextChanged += TxtSearchTextChangedEH;
+            // 
+            // lblTotalVerses
+            // 
+            lblTotalVerses.AutoSize = true;
+            lblTotalVerses.Location = new Point(390, 422);
+            lblTotalVerses.Name = "lblTotalVerses";
+            lblTotalVerses.Size = new Size(80, 15);
+            lblTotalVerses.TabIndex = 6;
+            lblTotalVerses.Text = "Total Verses: 0";
             // 
             // FrmVerseList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(836, 894);
+            Controls.Add(lblTotalVerses);
+            Controls.Add(txtSearch);
             Controls.Add(dvgVerseDisplay);
             Controls.Add(trbNumberToShow);
             Controls.Add(groupBox1);
@@ -430,5 +452,7 @@
         private RadioButton rdoShowLeastImportant;
         private TrackBar trbNumberToShow;
         private DataGridView dvgVerseDisplay;
+        private TextBox txtSearch;
+        private Label lblTotalVerses;
     }
 }
