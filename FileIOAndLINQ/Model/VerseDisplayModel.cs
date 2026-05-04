@@ -1,4 +1,6 @@
-﻿using System;
+﻿/// Brian Leung CST - 250 05/03/2026 File I/O and LINQ Activity 6
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
