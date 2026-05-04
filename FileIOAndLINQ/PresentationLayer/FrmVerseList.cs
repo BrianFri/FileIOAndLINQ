@@ -26,6 +26,8 @@ namespace FileIOAndLINQ.PresentationLayer
                         "Text File (*.txt)|*.txt|" +
                         "CSV File (*.csv)|*.csv|" +
                         "JSON File (*.json)|*.json";
+        // Store the number of verses to show
+        private int _numToShow;
 
 
         /// <summary>
@@ -512,5 +514,23 @@ namespace FileIOAndLINQ.PresentationLayer
                 }
             }
         } //End of TsmLoadClickEH
+
+        /// <summary>
+        /// Update the _numToShow variable and the
+        /// most/least important verses radio buttons
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TrbNumberToShowScrollEH(object sender, EventArgs e)
+        {
+            // Update _numToShow
+            _numToShow = trbNumberToShow.Value;
+
+            // Update the text for rdoShowLeastImportant
+            rdoShowLeastImportant.Text = $"Show {_numToShow} Least Important";
+
+            // Update the text for rdoShowMostImportant
+            rdoShowMostImportant.Text = $"Show {_numToShow} Most Important";
+        }
     }
 }
