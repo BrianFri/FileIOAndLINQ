@@ -44,6 +44,8 @@ namespace FileIOAndLINQ.PresentationLayer
             _verseLogic = new VerseLogic();
             // Initialize the binding source object
             _versesBindingSource = new BindingSource();
+            // Set the number to show track bar max to 0
+            trbNumberToShow.Maximum = 0;
         }
 
         /// <summary>
@@ -400,6 +402,9 @@ namespace FileIOAndLINQ.PresentationLayer
 
             // Format the data grid view
             FormatVersesDgv();
+
+            // Update the maximum for the number to show track bar
+            trbNumberToShow.Maximum = verses.Count;
         }
 
         /// <summary>
@@ -531,6 +536,23 @@ namespace FileIOAndLINQ.PresentationLayer
 
             // Update the text for rdoShowMostImportant
             rdoShowMostImportant.Text = $"Show {_numToShow} Most Important";
+        }
+
+        /// <summary>
+        /// Display the least important verses to the user
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RdoShowLeastImportantCheckChangedEH(object sender, EventArgs e)
+        {
+            // Get the list of least important objects from the BLL
+            List<VerseDisplayModel> leastImportantVerses = _verseLogic.GetLeastImportantVerses(_numToShow);
+
+            // Change the DataSource for the verse binding source
+            _versesBindingSource.DataSource = leastImportantVerses;
+
+            // Format the data grid view
+            FormatVersesDgv();
         }
     }
 }

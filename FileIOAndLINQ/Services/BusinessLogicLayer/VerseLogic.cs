@@ -36,32 +36,15 @@ namespace FileIOAndLINQ.Services.BusinessLogicLayer
         /// <summary>
         /// Get a list of verses from the inventory
         /// </summary>
-        /// <returns>List of verses formatted for display</returns>
+        /// <returns></returns>
         public List<VerseDisplayModel> GetAllVerses()
         {
             // Declare and initialize
             // Get the verses from the DAO
             List<VerseDataModel> dataVerses = _verseDAO.GetAllVerses();
 
-            // Create a DisplayModel list
-            List<VerseDisplayModel> displayVerses = new List<VerseDisplayModel>();
-
-            // Loop through the dataVerses list
-            foreach (VerseDataModel verse in dataVerses)
-            {
-                // Use the book, chapter, and verse to create the reference
-                string reference = $"{verse.Book} {verse.Chapter}:{verse.Verse}";
-
-                // Create a display verse model using the VerseDataModel verse
-                VerseDisplayModel displayVerse = new VerseDisplayModel(reference,
-                    verse.Text, verse.Meaning, verse.Importance);
-
-                // Add the display verse to the displayVerses list
-                displayVerses.Add(displayVerse);
-            }
-
-            // Return the display verses list
-            return displayVerses;
+            // Convert the dataVerses list to a displayVerses list and return
+            return ConvertVerseDataToDisplay(dataVerses);
         }
 
         /// <summary>
@@ -76,6 +59,34 @@ namespace FileIOAndLINQ.Services.BusinessLogicLayer
         }
 
         /// <summary>
+        /// Convert a list of VerseDataModels to VerseDisplayModels
+        /// </summary>
+        /// <param name="dataVerses"></param>
+        /// <returns></returns>
+        public List<VerseDisplayModel> ConvertVerseDataToDisplay(List<VerseDataModel> dataVerses)
+        {
+            // Declare and initialize
+            List<VerseDisplayModel> displayVerses = new List<VerseDisplayModel>();
+
+            // Loop through the dataVerses list
+            foreach (VerseDataModel verse in dataVerses)
+            {
+                // Use the book, chapter, and verse to create the reference
+                string reference = $"{verse.Book} {verse.Chapter}:{verse.Verse}";
+
+                // Create a display verse model using the VerseDataModel verse
+                VerseDisplayModel displayVerse = new VerseDisplayModel(reference,
+                    verse.Text, verse.Meaning, verse.Importance);
+
+                // Add the display model to the displayVerses list
+                displayVerses.Add(displayVerse);
+            }
+
+            // Return the display verses list
+            return displayVerses;
+        }
+
+        /// <summary>
         /// Read the verses from the given file
         /// </summary>
         /// <param name="fileName"></param>
@@ -84,6 +95,19 @@ namespace FileIOAndLINQ.Services.BusinessLogicLayer
         {
             // Return the DAO method
             return _verseDAO.ReadVersesFromFile(fileName);
+        }
+
+        /// <summary>
+        /// Get a list of the least important verses
+        /// </summary>
+        /// <param name="numToFind"></param>
+        /// <returns></returns>
+        public List<VerseDisplayModel> GetLeastImportantVerses(int numToFind)
+        {
+            // Get a list of the least important data verses
+            List<VerseDataModel> dataVerses = _verseDAO.GetLeastImportantVerses(numToFind);
+            // Convert the dataVerses list to a displayVerses list and return
+            return ConvertVerseDataToDisplay(dataVerses);
         }
     }
 }
