@@ -1,4 +1,5 @@
 ﻿using FileIOAndLINQ.Model;
+using FileIOAndLINQ.Services.BusinessLogicLayer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,8 @@ namespace FileIOAndLINQ.PresentationLayer
         // Flags for user input
         bool isValidBook = false, isValidChapter = false, isValidVerse = false;
         bool isValidText = false, isValidMeaning = false, isValidImportance = false;
+        // Business logic variable
+        private VerseLogic _verseLogic;
 
         /// <summary>
         /// Default constructor for FrmVerseList
@@ -23,11 +26,12 @@ namespace FileIOAndLINQ.PresentationLayer
         public FrmVerseList()
         {
             InitializeComponent();
-
             // Initialize and Hide the error list
             InitializeErrors();
             // Initialize cmbVerseBook
             InitializeBooks();
+            // Initialize the verse logic variable
+            _verseLogic = new VerseLogic();
         }
 
         /// <summary>
@@ -297,6 +301,10 @@ namespace FileIOAndLINQ.PresentationLayer
                 verse = new VerseRequestModel(cmbVerseBook.Text, chapter, txtVerseVerse.Text,
                                               txtVerseText.Text, txtVerseMeaning.Text,
                                               (int)nudVerseImportance.Value);
+                // Add the new verse using the _verseLogic variable
+                _verseLogic.AddVerse(verse);
+                // Clear the input fields
+                CLearInputFields();
             }
             // Check if the book is invalid
             else if (!isValidBook)
@@ -334,6 +342,23 @@ namespace FileIOAndLINQ.PresentationLayer
                 // Show the importance error label
                 lblImportanceError.Visible = true;
             }
+        }
+        /// <summary>
+        /// Clear the input fields used to add a verse
+        /// </summary>
+        public void ClearInputFields()
+        {
+            // Clear the book combo box
+            cmbVerseBook.SelectedIndex = -1;
+
+            // Clear the textboxes in grpAddVerse
+            foreach (TextBox textBox in grpAddVerse.Controls.OfType<TextBox>())
+            {
+                textBox.Clear();
+            }
+
+            // Reset the numeric up-down control
+            nudVerseImportance.Value = 0;
         }
     }
 }
