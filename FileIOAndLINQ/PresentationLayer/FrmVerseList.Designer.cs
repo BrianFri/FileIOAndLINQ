@@ -329,6 +329,7 @@
             rdoShowMostImportant.TabStop = true;
             rdoShowMostImportant.Text = "Show Most Valuable";
             rdoShowMostImportant.UseVisualStyleBackColor = true;
+            rdoShowMostImportant.CheckedChanged += RdoShowMostImportantCheckedChangedEH;
             // 
             // rdoShowLeastImportant
             // 
