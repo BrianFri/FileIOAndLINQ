@@ -19,6 +19,8 @@ namespace FileIOAndLINQ.PresentationLayer
         bool isValidText = false, isValidMeaning = false, isValidImportance = false;
         // Business logic variable
         private VerseLogic _verseLogic;
+        // Binding source for the data grid view
+        private BindingSource _versesBindingSource;
 
         /// <summary>
         /// Default constructor for FrmVerseList
@@ -32,6 +34,8 @@ namespace FileIOAndLINQ.PresentationLayer
             InitializeBooks();
             // Initialize the verse logic variable
             _verseLogic = new VerseLogic();
+            // Initialize the binding source object
+            _versesBindingSource = new BindingSource();
         }
 
         /// <summary>
@@ -304,7 +308,9 @@ namespace FileIOAndLINQ.PresentationLayer
                 // Add the new verse using the _verseLogic variable
                 _verseLogic.AddVerse(verse);
                 // Clear the input fields
-                CLearInputFields();
+                ClearInputFields();
+                // Refresh the data grid view
+                RefreshVersesDgv();
             }
             // Check if the book is invalid
             else if (!isValidBook)
@@ -360,5 +366,54 @@ namespace FileIOAndLINQ.PresentationLayer
             // Reset the numeric up-down control
             nudVerseImportance.Value = 0;
         }
+
+        /// <summary>
+        /// Load event handler for FrmVerseList
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrmVerseListLoadEH(object sender, EventArgs e)
+        {
+            // Set the data source for the data grid view
+            dvgVerseDisplay.DataSource = _versesBindingSource;
+        }
+
+        /// <summary>
+        /// Refresh the verses data grid view
+        /// </summary>
+        public void RefreshVersesDgv() 
+        {
+            // Get the verses from the business logic layer
+            List<VerseDisplayModel> verses = _verseLogic.GetAllVerses();
+
+            // Set the data source for the binding source object
+            _versesBindingSource.DataSource = verses;
+
+            // Format the data grid view
+            FormatVersesDgv();
+        }
+
+        /// <summary>
+        /// Format the verses data grid view
+        /// </summary>
+        private void FormatVersesDgv()
+        {
+            // Calculate the width for the text and meaning columns
+            int width = (dvgVerseDisplay.Width - dvgVerseDisplay.Columns[0].Width
+                         - dvgVerseDisplay.Columns[3].Width) / 2;
+
+            // Set the width for the text column
+            dvgVerseDisplay.Columns[1].Width = width;
+
+            // Set the width for the meaning column
+            dvgVerseDisplay.Columns[2].Width = width;
+
+            // Set the default cell style so text will wrap
+            dvgVerseDisplay.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+
+            // Call the auto resize row method so the rows will expand
+            dvgVerseDisplay.AutoResizeRows();
+        }
+
     }
 }

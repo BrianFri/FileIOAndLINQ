@@ -32,5 +32,36 @@ namespace FileIOAndLINQ.Services.BusinessLogicLayer
             // Return the DAO method
             return _verseDAO.AddVerse(verse);
         }
+
+        /// <summary>
+        /// Get a list of verses from the inventory
+        /// </summary>
+        /// <returns>List of verses formatted for display</returns>
+        public List<VerseDisplayModel> GetAllVerses()
+        {
+            // Declare and initialize
+            // Get the verses from the DAO
+            List<VerseDataModel> dataVerses = _verseDAO.GetAllVerses();
+
+            // Create a DisplayModel list
+            List<VerseDisplayModel> displayVerses = new List<VerseDisplayModel>();
+
+            // Loop through the dataVerses list
+            foreach (VerseDataModel verse in dataVerses)
+            {
+                // Use the book, chapter, and verse to create the reference
+                string reference = $"{verse.Book} {verse.Chapter}:{verse.Verse}";
+
+                // Create a display verse model using the VerseDataModel verse
+                VerseDisplayModel displayVerse = new VerseDisplayModel(reference,
+                    verse.Text, verse.Meaning, verse.Importance);
+
+                // Add the display verse to the displayVerses list
+                displayVerses.Add(displayVerse);
+            }
+
+            // Return the display verses list
+            return displayVerses;
+        }
     }
 }

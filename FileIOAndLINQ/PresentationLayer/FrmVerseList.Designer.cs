@@ -58,11 +58,13 @@
             rdoShowLeastValuable = new RadioButton();
             rdoShowAll = new RadioButton();
             trbNumberToShow = new TrackBar();
+            dvgVerseDisplay = new DataGridView();
             mnsFileActions.SuspendLayout();
             grpAddVerse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudVerseImportance).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trbNumberToShow).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dvgVerseDisplay).BeginInit();
             SuspendLayout();
             // 
             // mnsFileActions
@@ -201,11 +203,9 @@
             // 
             nudVerseImportance.Location = new Point(92, 493);
             nudVerseImportance.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
-            nudVerseImportance.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             nudVerseImportance.Name = "nudVerseImportance";
             nudVerseImportance.Size = new Size(216, 23);
             nudVerseImportance.TabIndex = 11;
-            nudVerseImportance.Value = new decimal(new int[] { 1, 0, 0, 0 });
             nudVerseImportance.Leave += NudVerseImportanceLeaveEH;
             // 
             // txtVerseMeaning
@@ -357,11 +357,20 @@
             trbNumberToShow.Size = new Size(345, 45);
             trbNumberToShow.TabIndex = 3;
             // 
+            // dvgVerseDisplay
+            // 
+            dvgVerseDisplay.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dvgVerseDisplay.Location = new Point(389, 35);
+            dvgVerseDisplay.Name = "dvgVerseDisplay";
+            dvgVerseDisplay.Size = new Size(419, 343);
+            dvgVerseDisplay.TabIndex = 4;
+            // 
             // FrmVerseList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(836, 894);
+            Controls.Add(dvgVerseDisplay);
             Controls.Add(trbNumberToShow);
             Controls.Add(groupBox1);
             Controls.Add(grpAddVerse);
@@ -369,6 +378,7 @@
             MainMenuStrip = mnsFileActions;
             Name = "FrmVerseList";
             Text = "Bible Verses";
+            Load += FrmVerseListLoadEH;
             mnsFileActions.ResumeLayout(false);
             mnsFileActions.PerformLayout();
             grpAddVerse.ResumeLayout(false);
@@ -377,6 +387,7 @@
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)trbNumberToShow).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dvgVerseDisplay).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -413,5 +424,6 @@
         private RadioButton rdoShowMostValuable;
         private RadioButton rdoShowLeastValuable;
         private TrackBar trbNumberToShow;
+        private DataGridView dvgVerseDisplay;
     }
 }
