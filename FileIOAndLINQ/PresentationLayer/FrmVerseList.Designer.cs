@@ -95,6 +95,7 @@
             loadToolStripMenuItem.Name = "loadToolStripMenuItem";
             loadToolStripMenuItem.Size = new Size(180, 22);
             loadToolStripMenuItem.Text = "Load";
+            loadToolStripMenuItem.Click += TsmLoadClickEH;
             // 
             // exitToolStripMenuItem
             // 
